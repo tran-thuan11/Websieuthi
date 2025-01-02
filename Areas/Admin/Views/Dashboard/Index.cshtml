@@ -1,0 +1,137 @@
+﻿@model StatisticalModel
+
+@{
+    ViewData["title"] = "Dashboard";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Dashboard</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css" />
+</head>
+<body>
+    <h3>Thống kê</h3>
+    <div class="row">
+        <div class="col-md-3">
+            <p>Thống kê sản phẩm</p>
+            @ViewBag.CountProduct sản phẩm
+        </div>
+        <div class="col-md-3">
+            <p>Thống kê đơn hàng</p>
+            @ViewBag.CountOrder đơn
+        </div>
+        <div class="col-md-3">
+            <p>Thống kê danh mục</p>
+            @ViewBag.CountCategory danh mục
+        </div>
+        <div class="col-md-3">
+            <p>Thống kê user</p>
+            @ViewBag.CountUser users
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <h4>Lọc dữ liệu theo:</h4>
+                <select class="filter-select">
+                    <option value="30">---Lọc dữ liệu---</option>
+                    <option value="7">7 ngày trước</option>
+                    <option value="30">tháng qua</option>
+                    <option value="90">3 tháng trước</option>
+                    <option value="365">1 năm</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <h4>Tùy chọn:</h4>
+                <label>Từ ngày</label>
+                <input type="date" class="form-control" id="date_from" />
+                <label>Đến ngày</label>
+                <input type="date" class="form-control" id="date_to" />
+                <button id="filterButton" class="btn btn-primary">Filter</button>
+            </div>
+        </div>
+        <div class="row">
+            <h4>Biểu đồ thống kê</h4>
+            <div id="myfirstchart" style="height: 250px;"></div>
+        </div>
+    </div>
+</body>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Khởi tạo biểu đồ Morris
+            var ChartMorris = new Morris.Line({
+                element: 'myfirstchart',
+                data: [],
+                xkey: 'date',
+                ykeys: ['sold', 'quantity', 'revenue', 'profit'],
+                labels: ["Số lượng bán ra", "Đơn hàng", "Doanh thu", "Lợi nhuận"]
+            });
+
+            // Lấy dữ liệu mặc định
+            $.ajax({
+                url: "@Url.Action("GetChartData", "Dashboard")",
+                type: "POST",
+                dataType: "json",
+                success: function (data) {
+                    ChartMorris.setData(data);
+                },
+                error: function (error) {
+                    console.error("Error fetching data:", error);
+                }
+            });
+
+            // Lọc dữ liệu theo số ngày
+            $('.filter-select').on('change', function () {
+                var days = $(this).val();
+                var endDate = new Date();
+                var startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
+
+                $.ajax({
+                    url: "@Url.Action("GetChartDataBySelect", "Dashboard")",
+                    type: 'POST',
+                    dataType: "json",
+                    data: {
+                        startDate: startDate.toISOString().split('T')[0],
+                        endDate: endDate.toISOString().split('T')[0]
+                    },
+                    success: function (data) {
+                        ChartMorris.setData(data);
+                    },
+                    error: function (error) {
+                        console.error("Error fetching data:", error);
+                    }
+                });
+            });
+
+            // Lọc theo khoảng ngày tùy chọn
+            $("#filterButton").click(function () {
+                var fromDate = $("#date_from").val();
+                var toDate = $("#date_to").val();
+
+                if (!fromDate || !toDate) {
+                    alert("Vui lòng chọn đầy đủ ngày bắt đầu và kết thúc.");
+                    return;
+                }
+
+                $.ajax({
+                    url: "@Url.Action("FilterData", "Dashboard")",
+                    type: "POST",
+                    data: { fromDate: fromDate, toDate: toDate },
+                    success: function (data) {
+                        ChartMorris.setData(data);
+                    },
+                    error: function (error) {
+                        console.error("Error fetching data:", error);
+                    }
+                });
+            });
+        });
+    </script>
+}
+</html>

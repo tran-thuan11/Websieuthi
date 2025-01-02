@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>C:\ASP_PUBLISH</_PublishTargetUrl>
+    <History>True|2024-10-23T18:28:20.5876691Z;True|2024-10-24T00:43:03.3695081+07:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="Authentication:Google:ClientId">
+      <Value>388309994014-3j7bimir0lrm4c8r9u825v6j5hhcghq4.apps.googleusercontent.com</Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="Authentication:Google:ClientSecret">
+      <Value>388309994014-3j7bimir0lrm4c8r9u825v6j5hhcghq4.apps.googleusercontent.com</Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="ConnectedDb">
+      <Value>388309994014-3j7bimir0lrm4c8r9u825v6j5hhcghq4.apps.googleusercontent.com</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+  <ItemGroup>
+    <EFMigrations Include="Shopping_Tutorial.Repository.DataContext">
+      <Value>388309994014-3j7bimir0lrm4c8r9u825v6j5hhcghq4.apps.googleusercontent.com</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>
